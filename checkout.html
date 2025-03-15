@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - HumaitaCarnashop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/imask"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #7c3aed, #ec4899, #f59e0b);
+            color: #1a1f36;
+            padding: 2rem;
+        }
+
+        .checkout-container {
+            background-color: rgba(255, 255, 255, 0.98);
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #7c3aed;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 1rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #6d28d9;
+        }
+
+        .section-title {
+            color: #1a1f36;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 2rem 1rem;
+        }
+
+        .form-container {
+            padding: 0 2rem 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: #1a1f36;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .input-field.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .order-summary {
+            background: #f8fafc;
+            border-radius: 16px;
+            margin: 1.5rem 2rem;
+            padding: 1.5rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .payment-methods {
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .payment-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+
+        .payment-option:hover {
+            border-color: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .payment-option.selected {
+            border-color: #7c3aed;
+            background-color: #f5f3ff;
+        }
+
+        .payment-option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-content {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .payment-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .pix-info {
+            background-color: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .pix-link {
+            display: inline-block;
+            color: #7c3aed;
+            font-weight: 600;
+            margin: 1rem 0;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background-color: #f5f3ff;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+
+        .pix-link:hover {
+            background-color: #ede9fe;
+            transform: translateY(-1px);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
+        }
+
+        .submit-button:disabled {
+            background: #9ca3af;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(200%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+
+            .checkout-container {
+                border-radius: 16px;
+            }
+
+            .section-title,
+            .order-summary,
+            .form-container,
+            .payment-methods {
+                margin: 1rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            header {
+                padding: 1.5rem;
+                font-size: 1.5rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <header>Checkout</header>
+
+        <a href="cart.html" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar ao Carrinho
+        </a>
+
+        <h2 class="section-title">Resumo do Pedido</h2>
+        <div id="order-summary" class="order-summary">
+            <!-- Order items will be inserted here -->
+        </div>
+
+        <h2 class="section-title">Forma de Pagamento</h2>
+        <div class="payment-methods">
+            <div class="payment-option" data-payment="credit">
+                <div class="payment-option-header">
+                    <input type="radio" name="payment" id="credit" value="credit">
+                    <label for="credit">Cartão de Crédito</label>
+                </div>
+                <div class="payment-content" id="credit-content">
+                    <div class="input-group">
+                        <label class="input-label">Número do Cartão</label>
+                        <input type="text" id="card-number" class="input-field" placeholder="0000 0000 0000 0000">
+                    </div>
+                    <div class="card-grid">
+                        <div class="input-group">
+                            <label class="input-label">Validade</label>
+                            <input type="text" id="card-expiry" class="input-field" placeholder="MM/AA">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">CVV</label>
+                            <input type="text" id="card-cvv" class="input-field" placeholder="123">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Nome no Cartão</label>
+                        <input type="text" id="card-name" class="input-field" placeholder="Nome como está no cartão">
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-option" data-payment="pix">
+                <div class="payment-option-header">
+                    <input type="radio" name="payment" id="pix" value="pix">
+                    <label for="pix">PIX</label>
+                </div>
+                <div class="payment-content" id="pix-content">
+                    <div class="pix-info">
+                        <p>Todo o dinheiro depositado será devolvido para crianças carentes.</p>
+                        <a href="https://livepix.gg/vakinhasolidaria" class="pix-link" target="_blank">
+                            livepix.gg/vakinhasolidaria
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Informações de Entrega</h2>
+        <form id="checkout-form" class="form-container" action="process_checkout.php" method="POST">
+            <input type="hidden" name="payment_method" id="payment_method">
+            
+            <div class="input-group">
+                <label class="input-label" for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" class="input-field" required>
+                <div class="error-message" id="nome-error"></div>
+            </div>
+
+            <button type="submit" class="submit-button">
+                Finalizar Compra
+            </button>
+        </form>
+    </div>
+
+    <div id="toast" role="alert">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const paymentContents = document.querySelectorAll('.payment-content');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            const cardMasks = {
+                number: IMask(document.getElementById('card-number'), {
+                    mask: '0000 0000 0000 0000'
+                }),
+                expiry: IMask(document.getElementById('card-expiry'), {
+                    mask: 'MM/YY',
+                    blocks: {
+                        MM: {
+                            mask: IMask.MaskedRange,
+                            from: 1,
+                            to: 12
+                        },
+                        YY: {
+                            mask: IMask.MaskedRange,
+                            from: 23,
+                            to: 33
+                        }
+                    }
+                }),
+                cvv: IMask(document.getElementById('card-cvv'), {
+                    mask: '000'
+                })
+            };
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const paymentType = this.dataset.payment;
+                    const radio = this.querySelector('input[type="radio"]');
+                    
+                    document.querySelectorAll('input[name="payment"]').forEach(input => input.checked = false);
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    paymentContents.forEach(content => content.classList.remove('active'));
+                    
+                    radio.checked = true;
+                    this.classList.add('selected');
+                    document.getElementById(`${paymentType}-content`).classList.add('active');
+                    paymentMethodInput.value = paymentType;
+                });
+            });
+
+            document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!paymentMethodInput.value) {
+                    showToast('Por favor, selecione uma forma de pagamento', 'error');
+                    return;
+                }
+
+                let hasErrors = false;
+                const fields = ['nome', 'cpf', 'email', 'telefone', 'cep', 'endereco', 'numero', 'bairro', 'cidade', 'estado'];
+
+                fields.forEach(field => {
+                    const input = document.getElementById(field);
+                    const error = validations[field] ? validations[field](input.value) : (input.value ? '' : 'Campo obrigatório');
+                    showError(field, error);
+                    if (error) hasErrors = true;
+                });
+
+                if (hasErrors) {
+                    showToast('Por favor, corrija os erros no formulário', 'error');
+                    return;
+                }
+
+                if (paymentMethodInput.value === 'credit') {
+                    const cardFields = {
+                        'card-number': 'Número do cartão inválido',
+                        'card-expiry': 'Data de validade inválida',
+                        'card-cvv': 'CVV inválido',
+                        'card-name': 'Nome no cartão é obrigatório'
+                    };
+
+                    for (const [fieldId, errorMessage] of Object.entries(cardFields)) {
+                        const field = document.getElementById(fieldId);
+                        if (!field.value) {
+                            showError(fieldId, errorMessage);
+                            hasErrors = true;
+                        }
+                    }
+
+                    if (hasErrors) {
+                        showToast('Por favor, preencha todos os dados do cartão', 'error');
+                        return;
+                    }
+                }
+
+                this.submit();
+            });
+        });
+    </script>
+</body>
+</html>

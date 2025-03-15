@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Produto</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 1px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .variations-container {
+            margin-top: 15px;
+            text-align: left;
+        }
+        .variation-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .variation-group input {
+            flex: 1;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .add-variation {
+            background: #007bff;
+            margin-top: 0.5px;
+        }
+        .add-variation:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Adicionar Novo Produto</h2>
+        <form action="add_product.php" method="POST" enctype="multipart/form-data">
+            <label>Nome do Produto:</label>
+            <input type="text" name="name" required>
+
+            <label>Descrição:</label>
+            <textarea name="description" required></textarea>
+
+            <label>Preço (R$):</label>
+            <input type="number" name="price" step="0.01" required>
+
+            <label>Categoria:</label>
+            <select name="category" required>
+                <option value="fantasias">Fantasias</option>
+                <option value="brinquedos">Brinquedos</option>
+                <option value="vapes">Vapes</option>
+            </select>
+
+            <label>Variações:</label>
+            <div class="variations-container" id="variations-container">
+                <div class="variation-group">
+                    <input type="text" name="variations[]" placeholder="Ex: Tamanho P, Cor Azul">
+                    <button type="button" class="add-variation" onclick="addVariation()">+</button>
+                </div>
+            </div>
+
+            <label>Imagem do Produto:</label>
+            <input type="file" name="image" accept="image/*" required>
+
+            <button type="submit">Adicionar Produto</button>
+        </form>
+    </div>
+
+    <script>
+        function addVariation() {
+            let container = document.getElementById("variations-container");
+            let div = document.createElement("div");
+            div.classList.add("variation-group");
+            div.innerHTML = `
+                <input type="text" name="variations[]" placeholder="Ex: Tamanho P, Cor Azul">
+                <button type="button" class="remove-variation" onclick="removeVariation(this)">-</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeVariation(button) {
+            button.parentElement.remove();
+        }
+    </script>
+
+</body>
+</html>
